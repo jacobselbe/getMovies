@@ -1,0 +1,27 @@
+* {
+    box-sizing: border-box;
+    font-family: sans-serif;
+    font-size: 20px;
+    text-align: center;
+}
+
+body {
+    background-color: dimgray;
+}
+
+main {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+h1 {
+    font-size: 25px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+label, input, button {
+    display: block;
+    margin: 15px auto;
+    border-radius: 3px;
+}
