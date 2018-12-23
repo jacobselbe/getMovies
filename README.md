@@ -1,1 +1,1 @@
-# getMovies
+# search-movies-api-capstone
