@@ -11,13 +11,17 @@ function watchForm() {
 
 //get movies
 function getMovies(userZipcode) {
-    //fandango api key: 6b5nj8uq9qvj9xuqmbec8qmw
-    //EBU8HrBe8u
-    //endpoint:https://api.themoviedb.org/3/movie/550?api_key=771ac5f3dcc248eb6341b155a4ec98f4
+    //fandongo api key: 6b5nj8uq9qvj9xuqmbec8qmw
 }
 
 //display movies
-
+function displayResults(response1, response2, response3) {
+    $('#js-results').html(`
+    <p>${response1}</p>
+    <p>${response2}</p>
+    <p>${response3}</p>
+    `);//---------------->temmpory info display
+}
 
 //set page
 $(setPage => {
