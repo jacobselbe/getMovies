@@ -31,8 +31,9 @@ function getKeywordIds(finalInput) {
     console.log('getKeywordIds() executed');
     const movieResults = [];
     for (let i = 0; i < finalInput.length; i++) {
+        let r = i + 1;
         let keywordUrl = `https://api.themoviedb.org/3/search/keyword?api_key=771ac5f3dcc248eb6341b155a4ec98f4&query=${finalInput[i]}`;
-        console.log(`keywordUrl${i}: ${keywordUrl}`);
+        console.log(`keywordUrl${r}: ${keywordUrl}`);
         fetch(keywordUrl)
             .then(response => response.json())
             .then(responseJson => getMovies(responseJson.results[0].id, i, movieResults))
@@ -57,7 +58,9 @@ function getMovies(id, i, results) {
 
 function filterMovies(response, results) {
     for (let i = 0; i < response.length; i++) {
-        results.push(response[i]);
+        if (response[i].original_language == "en") {
+            results.push(response[i]);
+        }
     }
     results.sort(movie => (movie.popularity));
     console.log(results);
