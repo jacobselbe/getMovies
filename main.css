@@ -25,3 +25,11 @@ label, input, button {
     margin: 15px auto;
     border-radius: 3px;
 }
+
+.hidden {
+    display: none;
+}
+
+.error {
+    color: darkred;
+}
