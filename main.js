@@ -24,6 +24,11 @@ function refineInput(searchInput) {
         }
     }
     console.log(finalInput);
+    if (finalInput.length === 0) {
+        $('#js-results').html(`
+            <p>Sorry, looks like we need a little more to go on than that. Please enter a little more description!</p>
+        `);
+    }
     getKeywordIds(finalInput);
 }
 
@@ -67,12 +72,18 @@ function filterMovies(response, results) {
     displayResults(results);
 }
 
+//youtube api to get trailers
+// const youTubeUrl = https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&q=CHANGE+movie+trailer&key=AIzaSyB0msEzlGGTsxyzYf6M9ZJhHxjYpuqc34E
+
 function displayResults(results) {
     $('#js-results').html('');
     for (let i = 0; i < results.length; i++) {
         let r = i + 1;
         $('#js-results').append(`
-            <p>${r}. ${results[i].title}</p>
+            <li>
+                <h3>${r}. ${results[i].title}</h3>
+                <p>${results[i].overview}</p>
+            </li>
         `);
     }
 }

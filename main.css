@@ -25,3 +25,12 @@ label, input, button {
     margin: 15px auto;
     border-radius: 3px;
 }
+
+li {
+    border: 1px solid white;
+    border-radius: 4px;
+    list-style: none;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 5px;
+}
