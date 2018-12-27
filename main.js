@@ -1,89 +1,127 @@
 'use strict';
 
+const searchInput = [];
+const keywordIds = [];
+const movieResults = [];
+
 function watchForm() {
     console.log('watchForm() ready');
     $('#js-searchForm').submit(e => {
         e.preventDefault();
-        const searchInput = $('#js-searchInput').val();
-        console.log(searchInput);
-        refineInput(searchInput);
+        searchInput.splice(0, searchInput.length);
+        keywordIds.splice(0, keywordIds.length);
+        movieResults.splice(0, movieResults.length);
+        $('#js-results').html('');
+        const userInput = $('#js-searchInput').val();
+        console.log('userInput:', userInput);
+        refineInput(userInput);
+        allRequests();
     });
 }
 
-function refineInput(searchInput) {
+function refineInput(input) {
     console.log('refineInput() executed');
-    const finalInput = [];
-    let inputArray = searchInput
+    let inputArray = input
         .replace(/[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]/g, '')
         .replace(/\s+/g, ' ')
         .trim()
         .split(' ');
     for (let i = 0; i < inputArray.length; i++) {
         if (!stopListLg.includes(inputArray[i])) {
-            finalInput.push(inputArray[i]);
+            searchInput.push(inputArray[i]);
         }
     }
-    console.log(finalInput);
-    if (finalInput.length === 0) {
+    console.log('searchInput:', searchInput);
+    if (searchInput.length === 0) {
         $('#js-results').html(`
             <p>Sorry, looks like we need a little more to go on than that. Please enter a little more description!</p>
         `);
     }
-    getKeywordIds(finalInput);
 }
 
-function getKeywordIds(finalInput) {
-    console.log('getKeywordIds() executed');
-    const movieResults = [];
-    for (let i = 0; i < finalInput.length; i++) {
-        let r = i + 1;
-        let keywordUrl = `https://api.themoviedb.org/3/search/keyword?api_key=771ac5f3dcc248eb6341b155a4ec98f4&query=${finalInput[i]}`;
-        console.log(`keywordUrl${r}: ${keywordUrl}`);
-        fetch(keywordUrl)
-            .then(response => response.json())
-            .then(responseJson => getMovies(responseJson.results[0].id, i, movieResults))
-            .catch(error => {
-                console.log(error);
-                $('#js-results').html(`
-                    <p>Sorry, looks like we need a little more to go on than that. Please enter a little more description!</p>
-                `);
-            });
-    }
-}
-
-function getMovies(id, i, results) {
-    let movieUrl = `https://api.themoviedb.org/3/discover/movie?api_key=771ac5f3dcc248eb6341b155a4ec98f4&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&with_keywords=${id}`;
-    let r = i + 1;
-    console.log(`movieUrl${r}: ${movieUrl}`);
-    fetch(movieUrl)
-        .then(response => response.json())
-        .then(responseJson => filterMovies(responseJson.results, results))
-        .catch(error => console.log(error));
-}
-
-function filterMovies(response, results) {
-    for (let i = 0; i < response.length; i++) {
-        if (response[i].original_language == "en") {
-            results.push(response[i]);
+async function allRequests() {
+    try {
+        await getKeywordIds();
+        await getMovies();
+        await getTrailers();
+        displayResults();
+    } catch(e) {
+        console.log(e);
+        $('#js-results').html(`
+            <p>Sorry, looks like we're having some technical difficulties! Check console for more info.'</p>
+        `);
+        if (keywordIds.length === 0) {
+            $('#js-results').html(`
+                <p>Sorry, looks like we need a little more to go on than that. Please enter a little more description!</p>
+            `);
         }
     }
-    results.sort(movie => (movie.popularity));
-    console.log(results);
-    displayResults(results);
 }
 
-//youtube api to get trailers
-// const youTubeUrl = https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&q=CHANGE+movie+trailer&key=AIzaSyB0msEzlGGTsxyzYf6M9ZJhHxjYpuqc34E
+async function getKeywordIds() {
+    console.log('getKeywordIds() executed');
+    for (let i = 0; i < searchInput.length; i++) {
+        const keywordUrl = `https://api.themoviedb.org/3/search/keyword?api_key=771ac5f3dcc248eb6341b155a4ec98f4&query=${searchInput[i]}`;
+        console.log(`keywordUrl: ${keywordUrl}`);
+        const response =  await fetch(keywordUrl);
+        const json = await response.json();
+        try {
+            keywordIds.push(json.results[0].id);
+        } catch {
+            console.log(`${searchInput[i]} doesn't return a keyword id`);
+        }
+    }
+    console.log('keywordIds:', keywordIds);
+}
 
-function displayResults(results) {
-    $('#js-results').html('');
+async function getMovies() {
+    console.log('getMovies() executed');
+    for (let i = 0; i < keywordIds.length; i++) {
+        let movieUrl = `https://api.themoviedb.org/3/discover/movie?api_key=771ac5f3dcc248eb6341b155a4ec98f4&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&with_keywords=${keywordIds[i]}`;
+        console.log(`movieUrl: ${movieUrl}`);
+        const response = await fetch(movieUrl);
+        const json = await response.json();
+        filterMovies(json.results);
+    }
+    movieResults.sort(movie => (movie.popularity));
+    console.log('movieResults:', movieResults);
+}
+
+function filterMovies(results) {
+    console.log('filterMovies() executed');
     for (let i = 0; i < results.length; i++) {
-        let r = i + 1;
-        $('#js-results').append(`
-            <li>
-                <h3>${r}. ${results[i].title}</h3>
-                <p>${results[i].overview}</p>
-            </li>
+        if (results[i].original_language == "en") {
+            movieResults.push(results[i]);
+        }
+    }
+}
+
+async function getTrailers() {
+    console.log('getTrailers() executed');
+    for (let i = 0; i < movieResults.length; i++) {
+        let title = movieResults[i].title.replace(/ /g, '+');
+        let trailerUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=${title}+movie+trailer&key=AIzaSyB0msEzlGGTsxyzYf6M9ZJhHxjYpuqc34E`;
+        console.log(`trailerUrl: ${trailerUrl}`);
+        const response = await fetch(trailerUrl);
+        const json = await response.json();
+        console.log(json);
+    }
+}
+
+function displayResults() {
+    if (movieResults.length > 0) {
+        for (let i = 0; i < movieResults.length; i++) {
+            let j = i + 1;
+            $('#js-results').append(`
+                <li>
+                    <h3>${j}. ${movieResults[i].title}</h3>
+                    <p>${movieResults[i].overview}</p>
+                </li>
+            `);
+        }
+    } else {
+        $('#js-results').html(`
+            <p>Sorry, looks like we need a little more to go on than that. Please enter a little more description!</p>
         `);
     }
 }
