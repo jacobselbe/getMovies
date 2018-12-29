@@ -82,7 +82,7 @@ function getMovieData(ids) {
             .then(responseJson => responseJson.results.forEach(movie => allMovies.push(movie)))
             .then(function () {
                 if (i === ids.length - 1) {
-                    const topMovies = allMovies.sort(movie => (movie.popularity)).slice(0, 10);
+                    const topMovies = allMovies.sort(movie => (movie.popularity)).slice(0, 6);
                     if (topMovies.length === 0) {
                         $('#js-results').html(`
                             <p>Sorry, looks like we need a little more to go on than that. Please enter a little more description!</p>
@@ -101,22 +101,6 @@ function getMovieData(ids) {
     }
 }
 
-function getTrailers(movies) {
-    for (let i = 0; i < movies.length; i++) {
-        const title = movies[i].title.replace(/ /g, '+');
-        const trailerUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=${title}+movie+trailer&key=AIzaSyB0msEzlGGTsxyzYf6M9ZJhHxjYpuqc34E`;
-        fetch(trailerUrl)
-            .then()
-            .then()
-            .catch(error => {
-                console.log(error);
-                $('?????????????').html(`
-                    <p>Trailer/picture not available</p>
-                `);//if picture availbe??
-            });
-    }
-}
-
 function displayMovieData(results) {
     console.log('displayMovieData() executed');
     $('#js-homePage').addClass('hidden');
@@ -124,15 +108,46 @@ function displayMovieData(results) {
     watchBackBtn();
     $('#js-results').html('');
     for (let i = 0; i < results.length; i++) {
-        console.log(results[i].title, results[i].popularity)
+        console.log(results[i]);
         let j = i + 1;
         $('#js-results').append(`
-            <li>
+            <li id="js-movieNumber${j}">
                 <h3>${j}. ${results[i].title}</h3>
-                <p>${results[i].overview}</p>
             </li>
         `);
     }
+}
+
+function getTrailers(movies) {
+    console.log('getTrailers() executed');
+    for (let i = 0; i < movies.length; i++) {
+        const title = movies[i].title.replace(/ /g, '+');
+        const trailerUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=${title}+movie+trailer&type=video&key=AIzaSyB0msEzlGGTsxyzYf6M9ZJhHxjYpuqc34E`;
+        fetch(trailerUrl)
+            .then(response => response.json())
+            .then(responseJson => displayTrailer(responseJson.items[0], i))
+            .catch(error => {
+                console.log(error);
+                $('?????????????').html(`
+                    <p>Trailer/picture not available</p>
+                `);
+            });
+    }
+}
+
+function displayTrailer(movie, i) {
+    console.log('displayTrailer() executed');
+    console.log(movie);
+    let j = i + 1;
+    $(`#js-movieNumber${j}`).append(`
+        <input type="image" id="js-playTrailer${j}" src="${movie.snippet.thumbnails.high.url}" alt="${movie.snippet.title}" class="grow">
+    `);
+    $(`#js-playTrailer${j}`).click(e => {
+        $(`#js-movieNumber${j}`).html(`
+            <iframe width="180" height="135" src="https://www.youtube.com/embed/${movie.id.videoId}?autoplay=1" frameborder="0" allowfullscreen">
+            </iframe>
+        `);
+    });
 }
 
 function watchBackBtn() {

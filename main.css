@@ -1,36 +1,104 @@
 * {
     box-sizing: border-box;
     font-family: sans-serif;
-    font-size: 20px;
-    text-align: center;
 }
 
 body {
-    background-color: dimgray;
-}
-
-main {
-    max-width: 1000px;
-    margin: 0 auto;
+    background-color: #141414;
+    color: white;
+    text-shadow: 2px 2px black;
+    font-size: 20px;
+    text-align: center;
+    background-image: 
+    linear-gradient(
+        to right,
+        rgba(0, 0, 0, 1),
+        rgba(0, 0, 0, 1),
+        rgba(0, 0, 0, 0.9),
+        rgba(0, 0, 0, 0.8),
+        rgba(0, 0, 0, 0.7),
+        rgba(0, 0, 0, 0.7),
+        rgba(0, 0, 0, 0.7),
+        rgba(0, 0, 0, 0.7),
+        rgba(0, 0, 0, 0.7),
+        rgba(0, 0, 0, 0.7),
+        rgba(0, 0, 0, 0.8),
+        rgba(0, 0, 0, 0.9),
+        rgba(0, 0, 0, 1),
+        rgba(0, 0, 0, 1)
+    ),
+    url(movieBackground.jpg);
 }
 
 h1 {
-    font-size: 25px;
-    margin-top: 40px;
+    font-size: 40px;
+    margin-top: 20%;
     margin-bottom: 40px;
 }
 
 label, input, button {
     display: block;
     margin: 15px auto;
+    border: none;
     border-radius: 3px;
+    font-size: 20px;
+    padding: 5px;
+}
+
+input, button {
+    width: 100%;
+    height: 40px;
+    text-align: center;
+}
+
+button {
+    background-color: #e63e32a4;
+    color: white;
+}
+
+button:hover {
+    background-color: #e63e32;
 }
 
 li {
-    border: 1px solid white;
-    border-radius: 4px;
     list-style: none;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    padding: 5px;
+    font-size: 25px;
+    border-radius: 4px;
+    margin-bottom: 70px;
+    margin-top: 70px;
+}
+
+.hidden {
+    display: none;
+}
+
+.grow {
+    width: 200px;
+    height: 150px;
+    transition: all .2s ease-in-out;
+}
+
+.grow:hover {
+    transform: matrix(1.5, 0, 0, 1.5, 0, -30);
+}
+
+iframe {
+    width: 300px;
+    height: 225px;
+}
+
+@media only screen and (min-width: 640px){
+    input, button {
+        width: 33.33333333%;
+    }
+
+    iframe {
+        width: 720px;
+        height: 540px;
+    }
+
+    .grow {
+        width: 480px;
+        height: 360px;
+    }
 }
