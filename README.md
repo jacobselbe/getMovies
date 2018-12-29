@@ -10,14 +10,14 @@ View working prototype here: [search-movies-api-capstone](https://jacobselbe.git
 
 ## Site Map: MVP ????
 
-![Site Map](/github-images/site-map.png)
+![Site Map](/github-images/site-map.jpeg)
 
 
 ## UX & User Stories: MVP ????
 
 **Landing Page** 
 
-As a user, I want to understand what the app is so that I can decide if I want to sign up
+As a user, I want to understand what the app is so that I can decide if I want to search anything
 
 ![Landing Page Design](/github-images/landing.png)
 
