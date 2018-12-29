@@ -1,12 +1,8 @@
 'use strict';
 
-function setPage() {
-    console.log('page set');
-    watchForm();
-}
-
+//wait for form to be submited and refine input
 function watchForm() {
-    console.log('watchForm() ready');
+    // console.log('watchForm() ready');
     $('#js-searchForm').submit(e => {
         e.preventDefault();
         $('#js-results').html('');
@@ -15,8 +11,9 @@ function watchForm() {
     });
 }
 
+//sanitize input
 function refineInput(input) {
-    console.log('refineInput() executed');
+    // console.log('refineInput() executed');
     const finalInput = [];
     let inputArray = input
         .replace(/[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~]/g, '')
@@ -28,7 +25,7 @@ function refineInput(input) {
             finalInput.push(inputArray[i]);
         }
     }
-    console.log(finalInput);
+    // console.log(finalInput);
     if (finalInput.length > 0) {
         if (finalInput.length < 11) {
             getMovieKeywordIds(finalInput);
@@ -44,8 +41,9 @@ function refineInput(input) {
     }
 }
 
+//get keyword ids from api
 function getMovieKeywordIds(input) {
-    console.log('getMovieKeywordIds() executed');
+    // console.log('getMovieKeywordIds() executed');
     const ids = [];
     for (let i = 0; i < input.length; i++) {
         const keywordUrl = `https://api.themoviedb.org/3/search/keyword?api_key=771ac5f3dcc248eb6341b155a4ec98f4&query=${input[i]}`;
@@ -54,7 +52,7 @@ function getMovieKeywordIds(input) {
             .then(responseJson => responseJson.results.forEach(kw => ids.push(kw.id)))
             .then(function () {
                 if (i === input.length - 1) {
-                    console.log(ids);
+                    // console.log(ids);
                     if (ids.length === 0) {
                         $('#js-results').html(`
                             <p>Sorry, looks like we need a little more to go on than that. Please enter a little more description!</p>
@@ -72,8 +70,9 @@ function getMovieKeywordIds(input) {
     }
 }
 
+//get movie data from api with the ids
 function getMovieData(ids) {
-    console.log('getMovieData() executed');
+    // console.log('getMovieData() executed');
     const allMovies = [];
     for (let i = 0; i < ids.length; i++) {
         const movieUrl = `https://api.themoviedb.org/3/discover/movie?api_key=771ac5f3dcc248eb6341b155a4ec98f4&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&with_keywords=${ids[i]}`;
@@ -101,8 +100,9 @@ function getMovieData(ids) {
     }
 }
 
+//updates DOM with movie data - no trailers yet
 function displayMovieData(results) {
-    console.log('displayMovieData() executed');
+    // console.log('displayMovieData() executed');
     $('#js-homePage').addClass('hidden');
     $('#js-resultTop').removeClass('hidden');
     watchBackBtn();
@@ -118,8 +118,9 @@ function displayMovieData(results) {
     }
 }
 
+//get movie video from youtube API
 function getTrailers(movies) {
-    console.log('getTrailers() executed');
+    // console.log('getTrailers() executed');
     for (let i = 0; i < movies.length; i++) {
         const title = movies[i].title.replace(/ /g, '+');
         const trailerUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=${title}+movie+trailer&type=video&key=AIzaSyB0msEzlGGTsxyzYf6M9ZJhHxjYpuqc34E`;
@@ -135,9 +136,10 @@ function getTrailers(movies) {
     }
 }
 
+//update DOM with trailer from youtube
 function displayTrailer(movie, i) {
-    console.log('displayTrailer() executed');
-    console.log(movie);
+    // console.log('displayTrailer() executed');
+    // console.log(movie);
     let j = i + 1;
     $(`#js-movieNumber${j}`).append(`
         <input type="image" id="js-playTrailer${j}" src="${movie.snippet.thumbnails.high.url}" alt="${movie.snippet.title}" class="grow">
@@ -150,8 +152,9 @@ function displayTrailer(movie, i) {
     });
 }
 
+//waiting for back button to be clicked and returning to home page
 function watchBackBtn() {
-    console.log('watchBackBtn() ready');
+    // console.log('watchBackBtn() ready');
     $('#js-backBtn').click(e => {
         $('#js-results').html('');
         $('#js-resultTop').addClass('hidden');
@@ -160,4 +163,4 @@ function watchBackBtn() {
     });
 }
 
-$(setPage()); 
+$(watchForm()); 

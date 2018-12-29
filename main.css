@@ -15,7 +15,7 @@ body {
         rgba(0, 0, 0, 0.7),
         rgba(0, 0, 0, 0.7)
     ),
-    url(movieBackground.jpg);
+    url(website-images/movieBackground.jpg);
 }
 
 h1 {
@@ -108,6 +108,6 @@ iframe {
             rgba(0, 0, 0, 1),
             rgba(0, 0, 0, 1)
         ),
-        url(movieBackground.jpg);
+        url(website-images/movieBackground.jpg);
     }
 }
